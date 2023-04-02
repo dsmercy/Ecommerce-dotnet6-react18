@@ -79,16 +79,30 @@ export default function AddProduct() {
                           <div className="row">
                             <div className="col-md-6">
                               <div className="mb-3">
-                                <label htmlFor="txtcategory" className="form-label">Category Name</label>
-                                <input id="txtcategory" placeholder="Product Name" type="text" className="form-control" {...register("Productcategory", { required: true, maxLength: 80 })} />
-                                {errors.Productcategory && <span className='error-text'>This field is required</span>}
+                                <label htmlFor="Category" className="form-label">Category</label>
+                                <select name="select" id="Category" className="form-select" {...register("Category", { required: true })} >
+                                  <option value="" selected disabled>Select</option>
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                  <option value="5">5</option>
+                                </select>
+                                {errors.Category && <span className='error-text'>This field is required</span>}
                               </div>
                             </div>
                             <div className="col-md-6">
                               <div className="mb-3">
-                                <label htmlFor="txtproSubCategory" className="form-label">Sub Category Name</label>
-                                <input id="txtproSubCategory" placeholder="Product Name" type="text" className="form-control" {...register("ProductSubCategory", { required: true, maxLength: 80 })} />
-                                {errors.ProductSubCategory && <span className='error-text'>This field is required</span>}
+                                <label htmlFor="txtSubCategory" className="form-label">Sub Category Name</label>
+                                <select name="select" id="SubCategory" className="form-select" {...register("SubCategory", { required: true })} >
+                                  <option value="" selected disabled>Select</option>
+                                  <option value="1">1</option>
+                                  <option value="2">2</option>
+                                  <option value="3">3</option>
+                                  <option value="4">4</option>
+                                  <option value="5">5</option>
+                                </select>
+                                {errors.SubCategory && <span className='error-text'>This field is required</span>}
                               </div>
                             </div>
 
@@ -129,11 +143,11 @@ export default function AddProduct() {
                                 </aside>
                                 {files.length > 0 && <button className="removebtn" onClick={removeAll}>Remove All</button>}
                               </section>
-                            </div>                            
+                            </div>
                           </div>
                           <div className='row mb-3'>
                             <div className="col-md-6">
-                            <label htmlFor="txtquantity" className="form-label">Description</label>
+                              <label htmlFor="txtquantity" className="form-label">Description</label>
                               <CKEditor
                                 editor={ClassicEditor}
                                 data="<p>Description !</p>"
@@ -158,14 +172,14 @@ export default function AddProduct() {
                             </div>
                           </div>
                           <div className='row mb-3'>
-                          <div className="col-md-6">
+                            <div className="col-md-6">
                               <div className="form-check mb-3">
                                 <input type="checkbox" className="form-check-input" {...register("Active", { required: true })} />
                                 <label className="form-check-label">In Stock</label>
                                 {errors.Active && <span className='error-text' style={{ display: 'block' }}>This field is required</span>}
                               </div>
                             </div>
-                            </div>
+                          </div>
                           <button className="mt-1 btn btn-primary">Submit</button>
                         </form>
                       </div>

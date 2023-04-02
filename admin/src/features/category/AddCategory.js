@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form';
 export default function AddCategory() {
 
   const { register, handleSubmit, formState: { errors } } = useForm();
-  const onSubmit = data => console.log(data);
+  const onSubmitCategory = data => console.log(data);
+  const onSubmitSubCategory = data => console.log(data);
 
   return (
     <>
@@ -29,7 +30,7 @@ export default function AddCategory() {
                     <div className="main-card mb-3 card">
                       <div className="card-body">
                         <div className="card-title">Add Category</div>
-                        <form className onSubmit={handleSubmit(onSubmit)}>
+                        <form className onSubmit={handleSubmit(onSubmitCategory)}>
                           <div className="mb-3">
                             <label htmlFor="txtcategory" className="form-label">Category Name</label>
                             <input id="txtcategory" placeholder="Category Name" type="text" className="form-control" {...register("CategoryName", {required: true, maxLength: 80})} />
@@ -49,7 +50,7 @@ export default function AddCategory() {
                     <div className="main-card mb-3 card">
                       <div className="card-body">
                         <div className="card-title">Add Sub Category</div>
-                        <form className onSubmit={handleSubmit(onSubmit)}>
+                        <form className onSubmit={handleSubmit(onSubmitSubCategory)}>
                         <div className="mb-3">
                             <label htmlFor="txtsubcategory" className="form-label">Sub Category Name</label>
                             <input id="txtsubcategory" placeholder="Category Name" type="text" className="form-control" {...register("SubcategoryName", {required: true, maxLength: 80})} />
