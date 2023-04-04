@@ -1,0 +1,9 @@
+﻿CREATE TABLE [dbo].[ERROR_LOG] (
+    [ERROR_LOG_ID]  BIGINT        IDENTITY (1, 1) NOT NULL,
+    [ERROR_NUMBER]  INT           NULL,
+    [ERROR_LINE]    INT           NULL,
+    [ERROR_MESSAGE] VARCHAR (MAX) NULL,
+    [OBJECT_NAME]   VARCHAR (250) NULL,
+    [CREATED_AT]    DATETIME      DEFAULT (getdate()) NULL
+);
+
