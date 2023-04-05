@@ -10,7 +10,7 @@ namespace VeggiFoodAPI.Helpers
             responseModel.Errors = new List<string>();
 
             if(errors!=null) responseModel.Errors.AddRange(errors);
-            responseModel.Data = data;  
+            responseModel.Response = data;  
             return responseModel;
         }
     }

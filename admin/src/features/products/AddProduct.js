@@ -4,22 +4,29 @@ import { useForm } from 'react-hook-form';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import 'react-dropzone-uploader/dist/styles.css'
+import AddDropzone from "../../components/form/AddDropzone";
 
 export default function AddProduct() {
 
   const { register, trigger, handleSubmit, setValue, getValues, formState: { errors } } = useForm();
   const [myFiles, setMyFiles] = useState([]);
 
+  const onSubmit = data => {
+    console.log(data);
+  };
+
+
   useEffect(() => {
     register('description', { required: true });
-    console.log('description', getValues("description"));
-  }, [getValues("description")])
-
-  const onSubmit = data => console.log(data);
+    // register('files');
+  }, [register])
 
   const onDrop = useCallback(acceptedFiles => {
     setMyFiles([...myFiles, ...acceptedFiles])
-  }, [myFiles])
+    setValue('files', acceptedFiles);
+    trigger('files');
+    console.log('acceptedFiles', acceptedFiles);
+  }, [myFiles, setValue, trigger])
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
@@ -34,10 +41,6 @@ export default function AddProduct() {
   const removeAll = () => {
     setMyFiles([])
   }
-
-  useEffect(() => {
-    console.log(myFiles);
-  }, [myFiles])
 
 
   const files = myFiles.map(file => (
@@ -71,17 +74,28 @@ export default function AddProduct() {
                       <div className="card-body">
                         <div className="card-title">Add Product</div>
                         <form className onSubmit={handleSubmit(onSubmit)}>
-                          <div className="mb-3">
-                            <label htmlFor="txtproduct" className="form-label">Product Name</label>
-                            <input id="txtproduct" placeholder="Product Name" type="text" className="form-control" {...register("ProductName", { required: true, maxLength: 80 })} />
-                            {errors.ProductName && <span className='error-text'>This field is required</span>}
+                          <div className='row'>
+                            <div className="col-md-6">
+                              <div className="mb-3">
+                                <label htmlFor="txtproduct" className="form-label">Product Name</label>
+                                <input id="txtproduct" placeholder="Product Name" type="text" className="form-control" {...register("ProductName", { required: true, maxLength: 80 })} />
+                                {errors.ProductName && <span className='error-text'>This field is required</span>}
+                              </div>
+                            </div>
+                            <div className="col-md-6">
+                              <div className="mb-3">
+                                <label htmlFor="txtquantity" className="form-label">Quantity</label>
+                                <input id="txtquantity" placeholder="Product Quantity" type="text" className="form-control" {...register("ProductQuantity", { required: true, maxLength: 80 })} />
+                                {errors.ProductQuantity && <span className='error-text'>This field is required</span>}
+                              </div>
+                            </div>
                           </div>
                           <div className="row">
                             <div className="col-md-6">
                               <div className="mb-3">
                                 <label htmlFor="Category" className="form-label">Category</label>
                                 <select name="select" id="Category" className="form-select" {...register("Category", { required: true })} >
-                                  <option value="" selected disabled>Select</option>
+                                  <option value="" defaultValue disabled>Select</option>
                                   <option value="1">1</option>
                                   <option value="2">2</option>
                                   <option value="3">3</option>
@@ -95,7 +109,7 @@ export default function AddProduct() {
                               <div className="mb-3">
                                 <label htmlFor="txtSubCategory" className="form-label">Sub Category Name</label>
                                 <select name="select" id="SubCategory" className="form-select" {...register("SubCategory", { required: true })} >
-                                  <option value="" selected disabled>Select</option>
+                                  <option value="" defaultValue disabled>Select</option>
                                   <option value="1">1</option>
                                   <option value="2">2</option>
                                   <option value="3">3</option>
@@ -123,53 +137,32 @@ export default function AddProduct() {
                               </div>
                             </div>
                           </div>
-                          <div className='row'>
-                            <div className="col-md-6">
-                              <div className="mb-3">
-                                <label htmlFor="txtquantity" className="form-label">Quantity</label>
-                                <input id="txtquantity" placeholder="Product Quantity" type="text" className="form-control" {...register("ProductQuantity", { required: true, maxLength: 80 })} />
-                                {errors.ProductQuantity && <span className='error-text'>This field is required</span>}
-                              </div>
-                            </div>
-                            <div className="col-md-6">
-                              <label htmlFor="txtquantity" className="form-label">Upload Images</label>
-                              <section className="container">
-                                <div {...getRootProps({ className: "dropzone" })}>
-                                  <input {...getInputProps()} />
-                                  <p>Drag 'n' drop some files here, or click to select files</p>
-                                </div>
-                                <aside className="mt-3">
-                                  <ul>{files}</ul>
-                                </aside>
-                                {files.length > 0 && <button className="removebtn" onClick={removeAll}>Remove All</button>}
-                              </section>
-                            </div>
-                          </div>
                           <div className='row mb-3'>
-                            <div className="col-md-6">
+                            <div className="col-md-8">
                               <label htmlFor="txtquantity" className="form-label">Description</label>
                               <CKEditor
                                 editor={ClassicEditor}
-                                data="<p>Description !</p>"
+                                data=""
                                 onReady={editor => {
                                   // You can store the "editor" and use when it is needed.
                                   // console.log('Editor is ready to use!', editor);
                                 }}
                                 onChange={(event, editor) => {
-                                  // const data = editor.getData();
-                                  // console.log({ event, editor, data });
                                   setValue('description', editor.getData());
                                   trigger('description');
                                 }}
                                 onBlur={(event, editor) => {
-                                  console.log('Blur.', editor);
+                                  // console.log('Blur.', editor);
                                 }}
                                 onFocus={(event, editor) => {
-                                  console.log('Focus.', editor);
+                                  // console.log('Focus.', editor);
                                 }}
                               />
                               {errors.description && <span className='error-text' style={{ display: 'block' }}>This field is required</span>}
                             </div>
+                          </div>
+                          <div className='row'>                            
+                            <AddDropzone register={register} setValue={setValue} trigger={trigger} errors={errors}/>
                           </div>
                           <div className='row mb-3'>
                             <div className="col-md-6">

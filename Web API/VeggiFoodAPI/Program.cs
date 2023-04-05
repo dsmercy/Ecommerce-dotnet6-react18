@@ -56,7 +56,7 @@ namespace VeggiFoodAPI
             builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("VeggiFoodContext") ?? throw new InvalidOperationException("Connection string 'VeggiFoodContext' not found.")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'VeggiFoodContext' not found.")));
 
             builder.Services.AddIdentityCore<ApplicationUser>(options =>
             {

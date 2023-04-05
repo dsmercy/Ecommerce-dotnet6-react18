@@ -2,7 +2,7 @@
 {
     public class ResponseModel
     {
-        public Object? Data { get; set; }
+        public Object? Response { get; set; }
         public List<string>? Errors { get; set; }
     }
 }
