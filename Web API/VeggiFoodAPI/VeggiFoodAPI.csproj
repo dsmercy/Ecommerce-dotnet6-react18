@@ -28,4 +28,8 @@
     <ProjectReference Include="..\VeggieFood.Repository\VeggieFood.Repository.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\products\" />
+  </ItemGroup>
+
 </Project>

@@ -21,7 +21,7 @@ namespace VeggieFood.Repository.Repository
         {
             _genericRepository = genericRepository;
         }
-        public async Task<ResponseDapper> Add(ProductViewModel product)
+        public async Task<ResponseDapper> Add(Product product)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace VeggieFood.Repository.Repository
             }
         }
 
-        public async Task<ResponseDapper> Remove(ProductViewModel product)
+        public async Task<ResponseDapper> Remove(Product product)
         {
             try
             {
@@ -81,7 +81,7 @@ namespace VeggieFood.Repository.Repository
             }
         }
 
-        public async Task<ResponseDapper> Update(ProductViewModel product)
+        public async Task<ResponseDapper> Update(Product product)
         {
             try
             {

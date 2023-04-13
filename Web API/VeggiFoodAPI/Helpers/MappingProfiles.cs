@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using VeggieFood.Models.Models.ViewModels;
 using VeggiFoodAPI.Models.DTOs;
 using VeggiFoodAPI.Models.ViewModels;
 
@@ -8,8 +9,9 @@ namespace VeggiFoodAPI.RequestHelpers
     {
         public MappingProfiles()
         {
-            CreateMap<CreateProductModel, Product>();
+            //CreateMap<CreateProductModel, Product>();
             CreateMap<UpdateProductModel, Product>();
+            CreateMap<ProductViewModel, Product>();
         }
     }
 }

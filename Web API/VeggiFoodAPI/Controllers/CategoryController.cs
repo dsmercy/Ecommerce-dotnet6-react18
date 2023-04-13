@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Win32;
 using NuGet.Protocol;
 using VeggieFood.Models.Models.ViewModels;
 using VeggieFood.Repository.Repository.Interfaces;
@@ -47,12 +49,16 @@ namespace VeggiFoodAPI.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CategoryModel category)
         {
-            var response = await _categoryRepository.Add(category);
-            if (response.ResponseNumber != 1)
+            if (ModelState.IsValid)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
+                var response = await _categoryRepository.Add(category);
+                if (response.ResponseNumber != 1)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
+                }
+                return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+            return BadRequest(_customResponse.GetResponseModel(ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), null));            
         }
                 
         [HttpPut("{id}")]

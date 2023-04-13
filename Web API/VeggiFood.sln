@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeggiFoodAPI", "VeggiFoodAP
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "DBProject", "DBProject\DBProject.sqlproj", "{CB222382-C7A8-432F-90D5-8C896CB44F1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeggieFood.Repository", "VeggieFood.Repository\VeggieFood.Repository.csproj", "{8B46155D-ECB6-4F0B-AD77-D92DF9B9A998}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeggieFood.Repository", "VeggieFood.Repository\VeggieFood.Repository.csproj", "{8B46155D-ECB6-4F0B-AD77-D92DF9B9A998}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeggieFood.Models", "VeggieFood.Models\VeggieFood.Models.csproj", "{0C69E40D-2371-4EAA-9375-BEA3F04A6E03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VeggieFood.Models", "VeggieFood.Models\VeggieFood.Models.csproj", "{0C69E40D-2371-4EAA-9375-BEA3F04A6E03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VeggieFood.Utilities", "VeggieFood.Utilities\VeggieFood.Utilities.csproj", "{7E4FF550-C82E-4D65-AF5E-445CC6B0C7DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{0C69E40D-2371-4EAA-9375-BEA3F04A6E03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C69E40D-2371-4EAA-9375-BEA3F04A6E03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C69E40D-2371-4EAA-9375-BEA3F04A6E03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E4FF550-C82E-4D65-AF5E-445CC6B0C7DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E4FF550-C82E-4D65-AF5E-445CC6B0C7DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E4FF550-C82E-4D65-AF5E-445CC6B0C7DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E4FF550-C82E-4D65-AF5E-445CC6B0C7DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

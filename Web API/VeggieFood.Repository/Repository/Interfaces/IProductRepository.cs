@@ -6,10 +6,10 @@ namespace VeggieFood.Repository.Repository.Interfaces
 {
     public interface IProductRepository
     {
-        Task<ResponseDapper> Add(ProductViewModel product);
-        Task<ResponseDapper> Update(ProductViewModel product);
+        Task<ResponseDapper> Add(Product product);
+        Task<ResponseDapper> Update(Product product);
         Task<ResponseDapper> Get(Product product);
         Task<ResponseDapper> GetAll();
-        Task<ResponseDapper> Remove(ProductViewModel product);
+        Task<ResponseDapper> Remove(Product product);
     }
 }

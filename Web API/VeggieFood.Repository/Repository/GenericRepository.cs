@@ -65,9 +65,14 @@ namespace VeggieFood.REPOSITORY.Repository
             }
         }
 
-        public async Task<T> AddMultiple<T>(string query, List<T> parameters)
+        public async Task<int> AddMultiple<T>(string query, List<T> parameters)
         {
-            throw new NotImplementedException();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                con.Open();
+                await con.ExecuteAsync(query, parameters);
+                return 1;
+            }
         }
 
         public Tuple<IEnumerable<T1>, IEnumerable<T2>> GetMultipleResultSets<T1, T2>(string sQuery, object parameters)
