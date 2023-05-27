@@ -6,14 +6,14 @@ namespace VeggiFoodAPI.Extentions
     {
         public static IQueryable<Product> Sort(this IQueryable<Product> query, string orderBy)
         {
-            if (string.IsNullOrEmpty(orderBy)) return query.OrderBy(p => p.Name);
+            //if (string.IsNullOrEmpty(orderBy)) return query.OrderBy(p => p.ProductName);
 
-            query = orderBy switch
-            {
-                "price" => query.OrderBy(p => p.Price),
-                "priceDesc" => query.OrderByDescending(p => p.Price),
-                _ => query.OrderBy(p => p.Name)
-            };
+            //query = orderBy switch
+            //{
+            //    "price" => query.OrderBy(p => p.Price),
+            //    "priceDesc" => query.OrderByDescending(p => p.Price),
+            //    _ => query.OrderBy(p => p.ProductName)
+            //};
 
             return query;
         }
@@ -24,7 +24,7 @@ namespace VeggiFoodAPI.Extentions
 
             var lowerCaseSearchTerm = searchTerm.Trim().ToLower();
 
-            return query.Where(p => p.Name.ToLower().Contains(lowerCaseSearchTerm));
+            return query.Where(p => p.ProductName.ToLower().Contains(lowerCaseSearchTerm));
         }
 
         public static IQueryable<Product> Filter(this IQueryable<Product> query, string brands, string types)
@@ -38,8 +38,8 @@ namespace VeggiFoodAPI.Extentions
             if (!string.IsNullOrEmpty(types))
                 typeList.AddRange(types.ToLower().Split(",").ToList());
 
-            query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
-            query = query.Where(p => typeList.Count == 0 || typeList.Contains(p.Type.ToLower()));
+            //query = query.Where(p => brandList.Count == 0 || brandList.Contains(p.Brand.ToLower()));
+            //query = query.Where(p => typeList.Count == 0 || typeList.Contains(p.Type.ToLower()));
 
             return query;
         }

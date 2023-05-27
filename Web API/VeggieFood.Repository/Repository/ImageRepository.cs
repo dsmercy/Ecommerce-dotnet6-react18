@@ -38,5 +38,10 @@ namespace VeggieFood.Repository.Repository
         {
             throw new NotImplementedException();
         }
+
+        Task<ResponseDapper> IImageRepository.AddBulk(List<ImageViewModel> images)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
