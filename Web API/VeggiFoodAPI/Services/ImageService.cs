@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using System.Drawing;
 using System.Security.Principal;
 
 namespace VeggiFoodAPI.Services
@@ -19,7 +20,7 @@ namespace VeggiFoodAPI.Services
             _cloudinary = new Cloudinary(acc);
         }
 
-        public async Task<ImageUploadResult> AddImageAsync(IFormFile file)
+        public async Task<ImageUploadResult> AddImageAsync(IFormFile file, string folderName)
         {
             var uploadResult = new ImageUploadResult();
 
@@ -28,7 +29,8 @@ namespace VeggiFoodAPI.Services
                 using var stream = file.OpenReadStream();
                 var uploadParams = new ImageUploadParams
                 {
-                    File = new FileDescription(file.FileName, stream)
+                    File = new FileDescription(file.FileName, stream),
+                    Folder = folderName
                 };
                 uploadResult = await _cloudinary.UploadAsync(uploadParams);
             }

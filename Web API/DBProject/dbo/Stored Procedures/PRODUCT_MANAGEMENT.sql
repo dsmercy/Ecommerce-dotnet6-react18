@@ -13,10 +13,9 @@ CREATE PROCEDURE [dbo].[PRODUCT_MANAGEMENT]
 	,@ActionType VARCHAR(20)
 AS
 --  DECLARE GLOBAL VARIABLES 
-DECLARE @Id INT
+DECLARE @Id VARCHAR(250)
 	,@ProductName VARCHAR(250)
-	,@CategoryId INT
-	,@SubCategoryId INT
+	,@CategoryId VARCHAR(250)
 	,@Quantity INT
 	,@Price DECIMAL(18, 2)
 	,@OfferPrice DECIMAL(18, 2)
@@ -34,7 +33,6 @@ BEGIN
 	SET @Id = JSON_VALUE(@JSON_STRING, '$.Id')
 	SET @ProductName = JSON_VALUE(@JSON_STRING, '$.ProductName')
 	SET @CategoryId = JSON_VALUE(@JSON_STRING, '$.CategoryId')
-	SET @SubCategoryId = JSON_VALUE(@JSON_STRING, '$.SubCategoryId')
 	SET @Quantity = JSON_VALUE(@JSON_STRING, '$.Quantity')
 	SET @Price = JSON_VALUE(@JSON_STRING, '$.Price')
 	SET @OfferPrice = JSON_VALUE(@JSON_STRING, '$.OfferPrice')
@@ -48,9 +46,9 @@ BEGIN
 		BEGIN TRY
 			-- CREATE PRODUCT
 			INSERT INTO Product (
-				ProductName
+			ID
+				,ProductName
 				,CategoryId
-				,SubCategoryId
 				,Quantity
 				,Price
 				,OfferPrice
@@ -59,9 +57,9 @@ BEGIN
 				,CreatedOn
 				)
 			VALUES (
-				@ProductName
+			@Id
+				,@ProductName
 				,@CategoryId
-				,@SubCategoryId
 				,@Quantity
 				,@Price
 				,@OfferPrice
@@ -76,7 +74,6 @@ BEGIN
 						SELECT Id
 							,ProductName
 							,CategoryId
-							,SubCategoryId
 							,Quantity
 							,Price
 							,OfferPrice
@@ -118,7 +115,6 @@ BEGIN
 				UPDATE [dbo].[Product]
 				SET [ProductName] = COALESCE(@ProductName, ProductName)
 					,[CategoryId] = COALESCE(@CategoryId, CategoryId)
-					,[SubCategoryId] = COALESCE(@SubCategoryId, SubCategoryId)
 					,[Quantity] = COALESCE(@Quantity, Quantity)
 					,[Price] = COALESCE(@Price, Price)
 					,[OfferPrice] = COALESCE(@OfferPrice, OfferPrice)
@@ -156,7 +152,6 @@ BEGIN
 					SELECT Id
 						,ProductName
 						,CategoryId
-						,SubCategoryId
 						,Quantity
 						,Price
 						,OfferPrice
@@ -200,7 +195,6 @@ BEGIN
 						SELECT Id
 							,ProductName
 							,CategoryId
-							,SubCategoryId
 							,Quantity
 							,Price
 							,OfferPrice

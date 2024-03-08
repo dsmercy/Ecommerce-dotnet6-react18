@@ -2,13 +2,11 @@
 {
     public class Product
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string ProductName { get; set; }
 
-        public int CategoryId { get; set; }
-
-        public int? SubCategoryId { get; set; }
+        public string CategoryId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -20,8 +18,6 @@
 
         public bool InStock { get; set; }
 
-        public DateTime CreatedOn { get; set; }
-
-        public DateTime UpdatedOn { get; set; }
+        public string CreatedOn { get; set; }
     }
 }

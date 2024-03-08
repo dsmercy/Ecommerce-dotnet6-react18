@@ -8,10 +8,10 @@ namespace VeggieFood.Models.Models.DTOs
 {
     public class Images
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
         public string ImageType { get; set; }
         public string ImagePath { get; set; }
-        public int ProductId { get; set; }
+        public string ProductId { get; set; }
 
     }
 }

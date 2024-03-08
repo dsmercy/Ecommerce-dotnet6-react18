@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using NuGet.Protocol;
+using VeggieFood.Models;
 using VeggieFood.Models.Models.DTOs;
 using VeggieFood.Models.Models.ViewModels;
-using VeggieFood.Repository.Repository;
 using VeggieFood.Repository.Repository.Interfaces;
 using VeggiFoodAPI.Helpers;
 using VeggiFoodAPI.Models.DTOs;
+using VeggiFoodAPI.Services;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace VeggiFoodAPI.Controllers
 {
@@ -17,117 +15,104 @@ namespace VeggiFoodAPI.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
-        private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
+        private readonly IGenericRepository<Product> _genericProductRepository;
         private readonly IMapper _mappper;
+        private readonly IGenericRepository<Images> _genericImageRepository;
+        private readonly ImageService _imageService;
         CustomResponse _customResponse = new CustomResponse();
 
-        public ProductController(IProductRepository productRepository, Microsoft.AspNetCore.Hosting.IHostingEnvironment hostingEnvironment
-            ,IMapper mappper)
+        public ProductController(IGenericRepository<Product> genericProductRepository, IMapper mappper, IGenericRepository<Images> genericImageRepository, ImageService imageService)
         {
-            _productRepository = productRepository;
-            _hostingEnvironment = hostingEnvironment;
+            _genericProductRepository = genericProductRepository;
             _mappper = mappper;
+            _genericImageRepository = genericImageRepository;
+            _imageService = imageService;
         }
 
         // GET: api/<ProductController>
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var response = await _productRepository.GetAll();
+            var response = await _genericProductRepository.GetAll(ConstantVariables.Tables.PRODUCT);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(response.ResponseData);
+            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> Get(string id)
         {
-            var response = await _productRepository.Get(new Product { Id = id });
+            var response = await _genericProductRepository.Get(new Product { Id = id }, ConstantVariables.Tables.PRODUCT);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseData));
+            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
         }
-                
+
         [HttpPost]
-        public async Task<ActionResult> Create(ProductViewModel model)
+        public async Task<ActionResult> Create([FromForm] ProductViewModel model)
         {
             if (ModelState.IsValid)
             {
                 ///save products
                 var product = _mappper.Map<Product>(model);
 
-                var productResponse = await _productRepository.Add(product);
+                product.Id = Guid.NewGuid().ToString();
+                product.CreatedOn = DateTime.Now.ToString();
 
-                //if (model.Files != null && model.Files.Count > 0)
-                //{
-                //    foreach (IFormFile image in model.Files)
-                //    {
-                //        string uniqueFileName = string.Empty;
-                //        string uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "images/products");
-                //        // To make sure the file name is unique we are appending a new
-                //        // GUID value and and an underscore to the file name
-                //        uniqueFileName = Guid.NewGuid().ToString() + "_" + image.FileName;
-                //        string filePath = Path.Combine(uploadsFolder, uniqueFileName);
-                //        // Use CopyTo() method provided by IFormFile interface to
-                //        // copy the file to wwwroot/images folder
-                //        image.CopyTo(new FileStream(filePath, FileMode.Create));
-                //        Images productImage = new Images();
-                //        productImage.ProductId = lastProductId;
-                //        productImage.ImageName = uniqueFileName;
-
-                //        // Load image.
-                //        Image img = Image.FromStream(image.OpenReadStream(), true, true);
-
-                //        // Compute thumbnail size.
-                //        Size thumbnailSize = GetThumbnailSize(img);
-
-                //        // Get thumbnail.
-                //        Image thumbnail = img.GetThumbnailImage(thumbnailSize.Width,
-                //            thumbnailSize.Height, null, IntPtr.Zero);
-
-                //        string uploadsFolder2 = Path.Combine(_hostingEnvironment.WebRootPath, "Thumbnails");
-                //        string filePath2 = Path.Combine(uploadsFolder2, uniqueFileName);
-
-                //        // Save thumbnail.
-                //        thumbnail.Save(filePath2);
-                //        _Prodimg_repository.Insert(productImage);
-                //    }
-                //}
-                //var response = await _productRepository.Add(product);
-                //if (response.ResponseNumber != 1)
-                //{
-                //    return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
-                //}
-                //return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+                if (model.Files != null && model.Files.Count > 0)
+                {
+                    foreach (IFormFile image in model.Files)
+                    {
+                        await SaveImage(product, image);
+                    }
+                }
+                var response = await _genericProductRepository.Add(product, ConstantVariables.Tables.PRODUCT);
+                if (response.ResponseNumber != 1)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
+                }
+                return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
             }
-            return BadRequest(_customResponse.GetResponseModel(ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), null));            
+            return BadRequest(_customResponse.GetResponseModel(ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), null));
         }
-                
+
+        private async Task SaveImage(Product product, IFormFile image)
+        {
+            Images productImage = new Images();
+            productImage.ProductId = product.Id;
+            productImage.ImageType = ConstantVariables.ImageConstants.PRODUCTIMAGE;
+
+            var imageResult = await _imageService.AddImageAsync(image, "products");
+            productImage.ImagePath = imageResult.SecureUrl.ToString();
+            productImage.Id = imageResult.PublicId;
+
+            await _genericImageRepository.Add(productImage, ConstantVariables.Tables.IMAGE);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(Product product)
         {
-            var response = await _productRepository.Update(product);
+            var response = await _genericProductRepository.Update(product, ConstantVariables.Tables.PRODUCT);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            var response = await _productRepository.Remove(new Product { Id = id });
+            var response = await _genericProductRepository.Remove(new Product { Id = id }, ConstantVariables.Tables.PRODUCT);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
         }
     }
 }

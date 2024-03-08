@@ -1,10 +1,10 @@
 ﻿-- =============================================
 /*
-EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"CategoryName":"Fruits","ParentId":0}', @ActionType='create'
-EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"CategoryName":"Vegetables","ParentId":"0"}', @ActionType='update'
+EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":"","CategoryName":"Fruits","ParentId":0}', @ActionType='create'
+EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":"","CategoryName":"Vegetables","ParentId":"0"}', @ActionType='update'
 EXEC CATEGORY_MANAGEMENT @JSON_STRING=null, @ActionType='list'
-EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":"1"}', @ActionType='listbyid'
-EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":1003}', @ActionType='remove'
+EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":""}', @ActionType='listbyid'
+EXEC CATEGORY_MANAGEMENT @JSON_STRING='{"Id":""}', @ActionType='remove'
 */
 -- =============================================
 CREATE PROCEDURE [dbo].[CATEGORY_MANAGEMENT]
@@ -13,9 +13,9 @@ CREATE PROCEDURE [dbo].[CATEGORY_MANAGEMENT]
 	,@ActionType VARCHAR(20)
 AS
 --  DECLARE GLOBAL VARIABLES 
-DECLARE @Id INT
+DECLARE @Id VARCHAR(200)
 	,@CategoryName VARCHAR(50)
-	,@ParentId INT;
+	,@ParentId VARCHAR(200);
 --  RESPONSE DECLARATIONS 
 DECLARE @ResponseNumber INT = 0
 	,@ResponseMessage VARCHAR(250)
@@ -50,11 +50,13 @@ BEGIN
 		BEGIN TRY
 			-- CREATE CATEGORY
 			INSERT INTO Category (
-				CategoryName
+				Id
+				,CategoryName
 				,ParentId
 				)
 			VALUES (
-				@CategoryName
+			@Id
+				,@CategoryName
 				,@ParentId
 				)
 

@@ -43,8 +43,8 @@ namespace VeggiFoodAPI
             // End logger configuration
 
             // Repositories
-            builder.Services.AddTransient<IGenericRepository, GenericRepository>();
-            builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddTransient<IDapperGenericRepository, DapperGenericRepository>();
+            builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
             builder.Services.AddControllers();

@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Win32;
-using NuGet.Protocol;
+using VeggieFood.Models;
 using VeggieFood.Models.Models.ViewModels;
 using VeggieFood.Repository.Repository.Interfaces;
 using VeggiFoodAPI.Helpers;
@@ -15,72 +14,77 @@ namespace VeggiFoodAPI.Controllers
     [ApiController]
     public class CategoryController : ControllerBase
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly IMapper _mappper;
+        private readonly IGenericRepository<Category> _genericRepository;
         CustomResponse _customResponse = new CustomResponse();
 
-        public CategoryController(ICategoryRepository categoryRepository)
+        public CategoryController(IMapper mappper, IGenericRepository<Category> genericRepository)
         {
-            _categoryRepository = categoryRepository;
+            _mappper = mappper;
+            _genericRepository = genericRepository;
         }
 
         // GET: api/<CategoryController>
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var response = await _categoryRepository.GetAll();
+            var response = await _genericRepository.GetAll(ConstantVariables.Tables.CATEGORY);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(response.ResponseData);
+            return Ok(_customResponse.GetGenericResponse<List<Category>>(null, response));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> Get(int id)
+        public async Task<ActionResult> Get(string id)
         {
-            var response = await _categoryRepository.Get(new Category { Id = id });
+            var response = await _genericRepository.Get(new Category { Id = id }, ConstantVariables.Tables.CATEGORY);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseData));
+            return Ok(_customResponse.GetGenericResponse<List<Category>>(null, response));
         }
-                
+
         [HttpPost]
-        public async Task<ActionResult> Create(CategoryModel category)
+        public async Task<ActionResult> Create([FromBody] CategoryModel model)
         {
             if (ModelState.IsValid)
             {
-                var response = await _categoryRepository.Add(category);
+                var category = _mappper.Map<Category>(model);
+                category.Id = Guid.NewGuid().ToString();
+                if (string.IsNullOrEmpty(category.ParentId)) { category.ParentId = "ParentCategory"; }
+                var response = await _genericRepository.Add(category, ConstantVariables.Tables.CATEGORY);
                 if (response.ResponseNumber != 1)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
                 }
-                return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+                return Ok(_customResponse.GetGenericResponse<List<Category>>(null, response));
             }
-            return BadRequest(_customResponse.GetResponseModel(ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), null));            
+            return BadRequest(_customResponse.GetResponseModel(ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)), null));
         }
-                
+
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(Category category)
+        public async Task<ActionResult> Update([FromBody] Category category)
         {
-            var response = await _categoryRepository.Update(category);
+            var response = await _genericRepository.Update(category, ConstantVariables.Tables.CATEGORY);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+            return Ok(_customResponse.GetGenericResponse<List<Category>>(null, response));
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(string id)
         {
-            var response = await _categoryRepository.Remove(new Category { Id = id });
+            var response = await _genericRepository.Remove(new Category { Id = id }, ConstantVariables.Tables.CATEGORY);
             if (response.ResponseNumber != 1)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetResponseModel(null, response.ResponseMessage));
+            return Ok(_customResponse.GetGenericResponse<List<Category>>(null, response));
         }
     }
 }

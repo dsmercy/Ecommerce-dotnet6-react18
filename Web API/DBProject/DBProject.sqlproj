@@ -77,5 +77,6 @@
     <Build Include="dbo\Tables\Images.sql" />
     <Build Include="dbo\Stored Procedures\TableToClass.sql" />
     <Build Include="dbo\Stored Procedures\PRODUCT_MANAGEMENT.sql" />
+    <Build Include="dbo\Stored Procedures\GENERIC_CRUD.sql" />
   </ItemGroup>
 </Project>

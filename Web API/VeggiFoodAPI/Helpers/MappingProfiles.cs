@@ -12,6 +12,7 @@ namespace VeggiFoodAPI.RequestHelpers
             //CreateMap<CreateProductModel, Product>();
             CreateMap<UpdateProductModel, Product>();
             CreateMap<ProductViewModel, Product>();
+            CreateMap<CategoryModel, Category>();
         }
     }
 }

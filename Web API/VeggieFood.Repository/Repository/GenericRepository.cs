@@ -1,97 +1,114 @@
 ﻿using Dapper;
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using VeggieFood.Models.Models.DTOs;
+using VeggieFood.Models.Models.ViewModels;
+using VeggieFood.Repository.Repository.Interfaces;
+using VeggieFood.REPOSITORY.Repository;
 using VeggiFoodAPI.Models;
+using VeggiFoodAPI.Models.DTOs;
 using static Dapper.SqlMapper;
 
-namespace VeggieFood.REPOSITORY.Repository
+namespace VeggieFood.Repository.Repository
 {
-    public class GenericRepository : IGenericRepository, IDisposable
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity>
     {
-        private readonly string connectionString;
-        public GenericRepository(IConfiguration configuration)
-        {
-            this.connectionString = configuration.GetConnectionString("DefaultConnection");
-        }
+        private readonly IDapperGenericRepository _dapperRepository;
 
-        public async Task<T> Add<T>(string query, T parameters)
+        public GenericRepository(IDapperGenericRepository genericRepository)
         {
-            using (SqlConnection con = new SqlConnection(connectionString))
+            _dapperRepository = genericRepository;
+        }
+        public async Task<ResponseDapper> Add(TEntity entity, string tableName)
+        {
+            try
             {
-                con.Open();
-                return await con.QueryFirstAsync<T>(query, parameters, commandType: CommandType.StoredProcedure);
+                DynamicParameters ObjParm = new DynamicParameters();
+                ObjParm.Add("@Table", tableName);
+                ObjParm.Add("@JSON_STRING", JsonConvert.SerializeObject(entity));
+                ObjParm.Add("@ActionType", "create");
+                return await _dapperRepository.AddWithDynamicParam<ResponseDapper>("GENERIC_CRUD", ObjParm);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
-        public async Task<T> AddWithDynamicParam<T>(string query, DynamicParameters parameters)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                return await con.QueryFirstAsync<T>(query, parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public async Task<T> Delete<T>(string query, object parameters)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                return await con.QueryFirstAsync<T>(query, parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public async Task<T> Get<T>(string query, object parameters)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                return await con.QueryFirstAsync<T>(query, parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public async Task<T> GetEntities<T>(string query, object parameters)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                return await con.QueryFirstAsync<T>(query, parameters, commandType: CommandType.StoredProcedure);
-            }
-        }
-
-        public async Task<int> AddMultiple<T>(string query, List<T> parameters)
-        {
-            using (SqlConnection con = new SqlConnection(connectionString))
-            {
-                con.Open();
-                await con.ExecuteAsync(query, parameters);
-                return 1;
-            }
-        }
-
-        public Tuple<IEnumerable<T1>, IEnumerable<T2>> GetMultipleResultSets<T1, T2>(string sQuery, object parameters)
+        public Task<ResponseDapper> AddBulk(List<TEntity> entities, string tableName)
         {
             throw new NotImplementedException();
+            //try
+            //{
+            //    return await _genericRepository.AddMultiple<ImageViewModel>("@insert into Images (ImageType,ImagePath,ProductId)values (@ImageType,@ImagePath,@ProductId)", images);
+            //}
+            //catch (Exception)
+            //{
+            //    throw;
+            //}
         }
 
-        public void Dispose()
+        public async Task<ResponseDapper> Get(TEntity entity, string tableName)
         {
-            this.Dispose(true);
-        }
-
-        private void Dispose(bool isDisposing)
-        {
-            if (isDisposing)
+            try
             {
-                GC.SuppressFinalize(this);
+                DynamicParameters ObjParm = new DynamicParameters();
+                ObjParm.Add("@Table", tableName);
+                ObjParm.Add("@JSON_STRING", entity != null ? JsonConvert.SerializeObject(entity) : null);
+                ObjParm.Add("@ActionType", "listbyid");
+                return await _dapperRepository.Get<ResponseDapper>("GENERIC_CRUD", ObjParm);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
+        public async Task<ResponseDapper> GetAll(string tableName)
+        {
+            try
+            {
+                DynamicParameters ObjParm = new DynamicParameters();
+                ObjParm.Add("@Table", tableName);
+                ObjParm.Add("@JSON_STRING", null);
+                ObjParm.Add("@ActionType", "list");
+                return await _dapperRepository.GetEntities<ResponseDapper>("GENERIC_CRUD", ObjParm);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ResponseDapper> Remove(TEntity entity, string tableName)
+        {
+            try
+            {
+                DynamicParameters ObjParm = new DynamicParameters();
+                ObjParm.Add("@Table", tableName);
+                ObjParm.Add("@JSON_STRING", JsonConvert.SerializeObject(entity));
+                ObjParm.Add("@ActionType", "remove");
+                return await _dapperRepository.AddWithDynamicParam<ResponseDapper>("GENERIC_CRUD", ObjParm);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<ResponseDapper> Update(TEntity entity, string tableName)
+        {
+            try
+            {
+                DynamicParameters ObjParm = new DynamicParameters();
+                ObjParm.Add("@Table", tableName);
+                ObjParm.Add("@JSON_STRING", JsonConvert.SerializeObject(entity));
+                ObjParm.Add("@ActionType", "update");
+                return await _dapperRepository.AddWithDynamicParam<ResponseDapper>("GENERIC_CRUD", ObjParm);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }
