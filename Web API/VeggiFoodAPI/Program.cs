@@ -47,7 +47,13 @@ namespace VeggiFoodAPI
             builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                {
+                    // Disable default 400 Bad Request behavior
+                    options.SuppressMapClientErrors = true;
+                    options.SuppressModelStateInvalidFilter = true;
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
