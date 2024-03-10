@@ -19,5 +19,10 @@ namespace VeggieFood.Models
             public static string IMAGE = "IMAGES";
             public static string CATEGORY = "CATEGORY";
         }
+        public static class StoredProcedures
+        {
+            public static string GENERIC_CRUD = "GENERIC_CRUD";
+            public static string PRODUCT_MANAGEMENT = "PRODUCT_MANAGEMENT";
+        }
     }
 }

@@ -17,6 +17,8 @@ namespace VeggieFood.Models.Models.ViewModels
         [Required]
         public int Quantity { get; set; }
         [Required]
+        public string PriceUnit { get; set; }
+        [Required]
         public decimal Price { get; set; }
         [Required]
         public decimal OfferPrice { get; set; }

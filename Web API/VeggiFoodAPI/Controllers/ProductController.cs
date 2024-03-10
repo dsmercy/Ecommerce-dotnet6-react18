@@ -33,12 +33,13 @@ namespace VeggiFoodAPI.Controllers
         [HttpGet]
         public async Task<ActionResult> GetAll()
         {
-            var response = await _genericProductRepository.GetAll(ConstantVariables.Tables.PRODUCT);
-            if (response.ResponseNumber != 1)
+            var productsResponse = await _genericProductRepository.GetAll("", ConstantVariables.StoredProcedures.PRODUCT_MANAGEMENT);
+            if (productsResponse.ResponseNumber != 1)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { response.ResponseMessage }, null));
+                return StatusCode(StatusCodes.Status500InternalServerError, _customResponse.GetResponseModel(new string[] { productsResponse.ResponseMessage }, null));
             }
-            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, response));
+
+            return Ok(_customResponse.GetGenericResponse<List<Product>>(null, productsResponse));
         }
 
         [HttpGet("{id}")]
@@ -83,10 +84,10 @@ namespace VeggiFoodAPI.Controllers
         private async Task SaveImage(Product product, IFormFile image)
         {
             Images productImage = new Images();
-            productImage.ProductId = product.Id;
-            productImage.ImageType = ConstantVariables.ImageConstants.PRODUCTIMAGE;
 
             var imageResult = await _imageService.AddImageAsync(image, "products");
+            productImage.ProductId = product.Id;
+            productImage.ImageType = ConstantVariables.ImageConstants.PRODUCTIMAGE;
             productImage.ImagePath = imageResult.SecureUrl.ToString();
             productImage.Id = imageResult.PublicId;
 
