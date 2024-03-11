@@ -57,13 +57,6 @@ namespace VeggiFoodAPI
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddCors(options => {
-                options.AddPolicy("MyAllowedOrigins", policy => {
-                    policy.AllowAnyOrigin() // Note the port is included
-                        .AllowAnyHeader()
-                        .AllowAnyMethod();
-                });
-            });
             builder.Services.AddScoped<TokenService>();
             builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
@@ -116,17 +109,16 @@ namespace VeggiFoodAPI
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors("corsapp");
             app.UseDefaultFiles();
             app.UseStaticFiles();
 
-            //app.UseCors(opt =>
-            //{
-            //    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000");
-            //});
 
-            app.UseCors("MyAllowedOrigins");
-
+            app.UseCors(builder => builder
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .SetIsOriginAllowed((host) => true)
+                        .AllowCredentials());
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -136,5 +128,5 @@ namespace VeggiFoodAPI
 
             app.Run();
         }
-     } 
+    }
 }
