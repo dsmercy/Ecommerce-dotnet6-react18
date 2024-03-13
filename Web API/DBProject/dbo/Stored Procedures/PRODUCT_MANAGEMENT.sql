@@ -3,24 +3,17 @@
 EXEC PRODUCT_MANAGEMENT @JSON_STRING='{"ProductName":"prod1","CategoryId":1,"SubCategoryId":0,"Quantity":10,"Price":100,"OfferPrice":90,"Description":"ddddddddddddddddd","InStock":1}', @ActionType='create'
 EXEC PRODUCT_MANAGEMENT @JSON_STRING='{"CategoryName":"Vegetables","ParentId":"0"}', @ActionType='update'
 EXEC PRODUCT_MANAGEMENT @JSON_STRING=null, @ActionType='list'
-EXEC PRODUCT_MANAGEMENT @JSON_STRING='{"Id":"1"}', @ActionType='listbyid'
-EXEC PRODUCT_MANAGEMENT @JSON_STRING='{"Id":1003}', @ActionType='remove'
+EXEC PRODUCT_MANAGEMENT @JSON_STRING='{"Id":"167c12bf-066c-4613-87dd-a630edabc12e"}', @ActionType='listbyid'
 */
 -- =============================================
 CREATE PROCEDURE [dbo].[PRODUCT_MANAGEMENT]
 	--  PARAMETERS FOR STORED PROCEDURE
-	@JSON_STRING NVARCHAR(MAX) = NULL
+	@Table NVARCHAR(50)
+	,@JSON_STRING NVARCHAR(MAX) = NULL
 	,@ActionType VARCHAR(20)
 AS
 --  DECLARE GLOBAL VARIABLES 
-DECLARE @Id VARCHAR(250)
-	,@ProductName VARCHAR(250)
-	,@CategoryId VARCHAR(250)
-	,@Quantity INT
-	,@Price DECIMAL(18, 2)
-	,@OfferPrice DECIMAL(18, 2)
-	,@Description VARCHAR(max)
-	,@InStock BIT;
+DECLARE @Id VARCHAR(250)=''
 --  RESPONSE DECLARATIONS 
 DECLARE @ResponseNumber INT = 0
 	,@ResponseMessage VARCHAR(250)
@@ -31,112 +24,7 @@ DECLARE @ResponseNumber INT = 0
 BEGIN
 	-- GET VALUES FROM @JSON_STRING    
 	SET @Id = JSON_VALUE(@JSON_STRING, '$.Id')
-	SET @ProductName = JSON_VALUE(@JSON_STRING, '$.ProductName')
-	SET @CategoryId = JSON_VALUE(@JSON_STRING, '$.CategoryId')
-	SET @Quantity = JSON_VALUE(@JSON_STRING, '$.Quantity')
-	SET @Price = JSON_VALUE(@JSON_STRING, '$.Price')
-	SET @OfferPrice = JSON_VALUE(@JSON_STRING, '$.OfferPrice')
-	SET @Description = JSON_VALUE(@JSON_STRING, '$.Description')
-	SET @InStock = JSON_VALUE(@JSON_STRING, '$.InStock')
 	SET NOCOUNT ON;
-
-	--Create SECTION =============================================
-	IF @ActionType = 'create'
-	BEGIN
-		BEGIN TRY
-			-- CREATE PRODUCT
-			INSERT INTO Product (
-			ID
-				,ProductName
-				,CategoryId
-				,Quantity
-				,Price
-				,OfferPrice
-				,Description
-				,InStock
-				,CreatedOn
-				)
-			VALUES (
-			@Id
-				,@ProductName
-				,@CategoryId
-				,@Quantity
-				,@Price
-				,@OfferPrice
-				,@Description
-				,@InStock
-				,GETDATE()
-				)
-
-			SET @ResponseNumber = 1
-			SET @ResponseMessage = 'Product successfully saved'
-			SET @ResponseData = (
-						SELECT Id
-							,ProductName
-							,CategoryId
-							,Quantity
-							,Price
-							,OfferPrice
-							,Description
-							,InStock
-						FROM Product
-						WHERE Id = SCOPE_IDENTITY()
-						FOR JSON PATH
-						)
-		END TRY
-
-		BEGIN CATCH
-			SET @ResponseNumber = ERROR_NUMBER()
-			SET @ResponseMessage = ERROR_MESSAGE()
-			SET @ErrorObjectName = ERROR_PROCEDURE()
-			SET @ERROR_LINE = ERROR_LINE()
-
-			GOTO ERR_HANDLER
-		END CATCH
-	END
-
-	--Update SECTION =============================================
-	IF @ActionType = 'update'
-	BEGIN
-		BEGIN TRY
-			IF NOT EXISTS (
-					SELECT 1
-					FROM Product
-					WHERE Id = @Id
-					)
-			BEGIN
-				SET @ResponseNumber = - 1
-				SET @ResponseMessage = 'Product not found'
-				SET @ResponseData = NULL
-			END
-			ELSE
-			BEGIN
-				-- UPDATE PRODUCT
-				UPDATE [dbo].[Product]
-				SET [ProductName] = COALESCE(@ProductName, ProductName)
-					,[CategoryId] = COALESCE(@CategoryId, CategoryId)
-					,[Quantity] = COALESCE(@Quantity, Quantity)
-					,[Price] = COALESCE(@Price, Price)
-					,[OfferPrice] = COALESCE(@OfferPrice, OfferPrice)
-					,[Description] = COALESCE(@Description, Description)
-					,[InStock] = COALESCE(@InStock, InStock)
-				WHERE Id = @Id
-
-				SET @ResponseNumber = 1
-				SET @ResponseMessage = 'Product successfully updated'
-				SET @ResponseData = NULL
-			END
-		END TRY
-
-		BEGIN CATCH
-			SET @ResponseNumber = ERROR_NUMBER()
-			SET @ResponseMessage = ERROR_MESSAGE()
-			SET @ErrorObjectName = ERROR_PROCEDURE()
-			SET @ERROR_LINE = ERROR_LINE()
-
-			GOTO ERR_HANDLER
-		END CATCH
-	END
 
 	--Select all SECTION =============================================
 	IF @ActionType = 'list'
@@ -149,16 +37,26 @@ BEGIN
 						FROM Product
 						)) + ' Product data successfully fetched'
 			SET @ResponseData = (
-					SELECT Id
-						,ProductName
-						,CategoryId
-						,Quantity
-						,Price
-						,OfferPrice
-						,Description
-						,InStock
-					FROM Product
-					FOR JSON PATH
+					SELECT p.Id
+						,p.ProductName
+						,p.CategoryId
+						,p.Quantity
+						,p.Price
+						,p.OfferPrice
+						,p.Description
+						,p.InStock
+						,p.CreatedOn
+						,(
+							SELECT Id
+								,ImagePath
+								,ImageType
+								,ProductId
+							FROM Images i
+							WHERE i.ProductId = p.Id
+							FOR JSON AUTO
+							) AS Images
+					FROM Product p
+					FOR JSON AUTO
 					)
 		END TRY
 
@@ -204,44 +102,6 @@ BEGIN
 						WHERE Id = @Id
 						FOR JSON PATH
 						)
-			END
-		END TRY
-
-		BEGIN CATCH
-			SET @ResponseNumber = ERROR_NUMBER()
-			SET @ResponseMessage = ERROR_MESSAGE()
-			SET @ErrorObjectName = ERROR_PROCEDURE()
-			SET @ERROR_LINE = ERROR_LINE()
-
-			GOTO ERR_HANDLER
-		END CATCH
-	END
-
-	--Remove by Id SECTION =============================================
-	IF @ActionType = 'remove'
-	BEGIN
-		BEGIN TRY
-			IF NOT EXISTS (
-					SELECT 1
-					FROM Product
-					WHERE Id = @Id
-					)
-			BEGIN
-				SET @ResponseNumber = - 1
-				SET @ResponseMessage = 'Product not found'
-				SET @ResponseData = NULL
-			END
-			ELSE
-			BEGIN
-				-- Delete Product
-				DELETE
-				FROM Product
-				WHERE Id = @Id
-
-				SET @Id = @Id;
-				SET @ResponseNumber = 1
-				SET @ResponseMessage = 'Product Removed successfully'
-				SET @ResponseData = NULL
 			END
 		END TRY
 

@@ -1,6 +1,7 @@
 ﻿-- ================= EXECUTION SECTION =========================
---EXEC GENERIC_CRUD @Table = 'Images',@JSON_STRING = '{"Id":"7", "ImageType":"SampleType", "ImagePath":"SamplePath", "ProductId":"SampleProductId"}',@ActionType = 'create';
---EXEC GENERIC_CRUD @Table = 'Images',@JSON_STRING = '{"Id":"1", "ImageType":"SampleType1", "ImagePath":"SamplePath","ProductId":"SampleProductId"}',@ActionType = 'update';
+--EXEC GENERIC_CRUD @Table = 'Product',@JSON_STRING = '{"Id":"f8cc8d18-81d4-43ba-9e19-38e84a8f02d4","ProductName":"Potato","CategoryId":"a3572cfb-5de3-4fc4-a0aa-68b806b636e5","Quantity":100,"Price":28.0,"OfferPrice":25.0,"Description":"Potato is a starchy vegetable which is popularly used in many recipes. Due to their blend taste, peeled Potatoes pair well with a wide number of vegetables. These are also used to make chips and snacks.","InStock":true,"CreatedOn":"3/11/2024 1:16:59 AM"}',@ActionType = 'create';
+--EXEC GENERIC_CRUD @Table = 'Product',@JSON_STRING = '{"Id":"f8cc8d18-81d4-43ba-9e19-38e84a8f02d7","ProductName":"prod1","CategoryId":"a3572cfb-5de3-4fc4-a0aa-68b806b636e5","Quantity":10,"Price":100,"OfferPrice":90,"Description":"Potato is a starchy vegetable which is popularly used in many recipes. Due to their blend taste peeled Potatoes pair well with a wide number of vegetables. These are also used to make chips and snacks.","InStock":true}',@ActionType = 'create';
+--EXEC GENERIC_CRUD @Table = 'Images',@JSON_STRING = '{"Id":2, "ImageType":"SampleType1", "ImagePath":"SamplePath","ProductId":"SampleProductId"}',@ActionType = 'create';
 --EXEC GENERIC_CRUD @Table = 'Images',@ActionType = 'list';
 --EXEC GENERIC_CRUD @Table = 'Images',@JSON_STRING = '{"Id":"1"}',@ActionType = 'listbyid';
 --EXEC GENERIC_CRUD @Table = 'Images',@JSON_STRING = '{"Id":"7"}',@ActionType = 'remove';
@@ -40,17 +41,19 @@ BEGIN
 			SELECT @Key = [key]
 				,@Columns += ',' + QUOTENAME([key])
 				,@Values += ',' + CASE 
-					WHEN ISJSON(value) = 1
-						THEN '"' + REPLACE(value, '"', '\"') + '"'
-					ELSE QUOTENAME(value, '''')
-					END
+    WHEN [key] = 'Description'
+        THEN 'N''' + REPLACE(value, '''', '''''') + ''''
+    WHEN ISJSON(value) = 1
+        THEN 'N''' + REPLACE(value, '''', '''''') + ''''
+    ELSE QUOTENAME(value, '''')
+    END
 			FROM OPENJSON(@JSON_STRING)
 
 			SET @Columns = STUFF(@Columns, 1, 1, '');
 			SET @Values = STUFF(@Values, 1, 1, '');
 
 			DECLARE @InsertStatement NVARCHAR(MAX) = 'INSERT INTO ' + @Table + ' (' + @Columns + ') VALUES (' + @Values + ')';
-
+			
 			EXEC sp_executesql @InsertStatement;
 
 			SET @ResponseNumber = 1;
