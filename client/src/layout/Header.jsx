@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import cartStore from '../store/cartStore';
 
 export default function Home() {
-    const [cartItems, setCartItems] = useState([]);
-    useEffect(() => {
-        setCartItems(localStorage.getItem('cart'));
-    }, []);
+    const cartItems = cartStore.carts;
+    // useEffect(() => {
+    //     setCartItems(localStorage.getItem('cart'));
+    // }, []);
 
 
 

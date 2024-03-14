@@ -8,7 +8,7 @@ const genericStore = (dataKey, initialState = []) => {
         [dataKey]: initialState,
 
         createItem: (key, item) => {
-          set((state) => ({ [dataKey]: [...state[dataKey], { [key]: item }] }));
+          set((state) => ({ [dataKey]: [...state[dataKey], item] }));
         },
 
         readItems: () => {

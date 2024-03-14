@@ -1,6 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import cartStore from '../../store/cartStore'
 
 export default function Basket() {
+
+    const cartData = cartStore.carts;
+
+    useEffect(() => {
+      console.log('cartData',cartData);
+    }, [])
+    
+
     return (
         <>
             <section className="py-4 osahan-main-body">
@@ -15,7 +24,7 @@ export default function Basket() {
                                                 className="btn d-flex align-items-center bg-white btn-block text-left btn-lg h5 px-3 py-4 m-0"
                                                 type="button" data-toggle="collapse" data-target="#collapseOne"
                                                 aria-expanded="true" aria-controls="collapseOne">
-                                                <span className="c-number">1</span> Cart (3 items)
+                                                <span className="c-number">1</span> Cart ({cartData?.length} items)
                                             </button>
                                         </h2>
                                     </div>
@@ -38,86 +47,19 @@ export default function Basket() {
                                                                 className="text-success mr-1">$1.20kg</del> $0.98/kg</p>
                                                             <div className="d-flex align-items-center">
                                                                 <p className="total_price font-weight-bold m-0">$2.82</p>
-                                                                <form id='myform' className="cart-items-number d-flex ml-auto"
-                                                                    method='POST' action='#'>
-                                                                    <input type='button' value='-'
+                                                                <div id='myform' className="cart-items-number d-flex ml-auto">
+                                                                    <input type='button' defaultValue='-'
                                                                         className='qtyminus btn btn-success btn-sm'
                                                                         field='quantity' />
-                                                                    <input type='text' name='quantity' value='1'
+                                                                    <input type='text' name='quantity' defaultValue='1'
                                                                         className='qty form-control' />
-                                                                    <input type='button' value='+'
+                                                                    <input type='button' defaultValue='+'
                                                                         className='qtyplus btn btn-success btn-sm'
                                                                         field='quantity' />
-                                                                </form>
+                                                                </div>
                                                             </div>
                                                         </a>
                                                     </div>
-                                                </div>
-                                                <div className="cart-items bg-white position-relative border-bottom">
-                                                    <div className="d-flex  align-items-center p-3">
-                                                        <a href="product_details.html"><img src="img/cart/g2.png"
-                                                            className="img-fluid" /></a>
-                                                        <a href="product_details.html"
-                                                            className="ml-3 text-dark text-decoration-none w-100">
-                                                            <h5 className="mb-1">Spinach</h5>
-                                                            <p className="text-muted mb-2"><del
-                                                                className="text-success mr-1">$1.20kg</del> $0.98/kg</p>
-                                                            <div className="d-flex align-items-center">
-                                                                <p className="total_price font-weight-bold m-0">$3.82</p>
-                                                                <form id='myform' className="cart-items-number d-flex ml-auto"
-                                                                    method='POST' action='#'>
-                                                                    <input type='button' value='-'
-                                                                        className='qtyminus btn btn-success btn-sm'
-                                                                        field='quantity' />
-                                                                    <input type='text' name='quantity' value='1'
-                                                                        className='qty form-control' />
-                                                                    <input type='button' value='+'
-                                                                        className='qtyplus btn btn-success btn-sm'
-                                                                        field='quantity' />
-                                                                </form>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div className="cart-items bg-white position-relative border-bottom">
-                                                    <div className="d-flex  align-items-center p-3">
-                                                        <a href="product_details.html"><img src="img/cart/g3.png"
-                                                            className="img-fluid" /></a>
-                                                        <a href="product_details.html"
-                                                            className="ml-3 text-dark text-decoration-none w-100">
-                                                            <h5 className="mb-1">Chilli</h5>
-                                                            <p className="text-muted mb-2"><del
-                                                                className="text-success mr-1">$1.20kg</del> $0.98/kg</p>
-                                                            <div className="d-flex align-items-center">
-                                                                <p className="total_price font-weight-bold m-0">$2.82</p>
-                                                                <form id='myform' className="cart-items-number d-flex ml-auto"
-                                                                    method='POST' action='#'>
-                                                                    <input type='button' value='-'
-                                                                        className='qtyminus btn btn-success btn-sm'
-                                                                        field='quantity' />
-                                                                    <input type='text' name='quantity' value='1'
-                                                                        className='qty form-control' />
-                                                                    <input type='button' value='+'
-                                                                        className='qtyplus btn btn-success btn-sm'
-                                                                        field='quantity' />
-                                                                </form>
-                                                            </div>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <a href="#" className="text-decoration-none btn btn-block p-3" type="button"
-                                                        data-toggle="collapse" data-target="#collapsetwo" aria-expanded="true"
-                                                        aria-controls="collapsetwo">
-                                                        <div
-                                                            className="rounded shadow bg-success d-flex align-items-center p-3 text-white">
-                                                            <div className="more">
-                                                                <h6 className="m-0">Subtotal $8.52</h6>
-                                                                <p className="small m-0">Proceed to checkout</p>
-                                                            </div>
-                                                            <div className="ml-auto"><i className="icofont-simple-right"></i></div>
-                                                        </div>
-                                                    </a>
                                                 </div>
                                             </div>
                                         </div>

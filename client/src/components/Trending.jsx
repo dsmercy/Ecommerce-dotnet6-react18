@@ -4,14 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import ProductCard from './ProductCard';
 import services from "../api/services";
+import productStore from '../store/productStore';
 
 export default function Trending() {
 
-    const [products, setProducts] = useState([]);
+    const products = productStore.getState().products;
+
     useEffect(() => {
         services.Product.getAll().then(result => {
-            console.log(result.response);
-            setProducts(result.response);
+            productStore.addProducts(result.response);
         });
     }, []);
 
