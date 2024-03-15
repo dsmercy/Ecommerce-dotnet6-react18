@@ -1,20 +1,26 @@
-import commonFunctions from "../Helpers/comonFunctions";
-import genericStore from "./genericStore";
+// import commonFunctions from "../Helpers/comonFunctions";
+// import genericStore from "./genericStore";
 
-const cartStore = genericStore("carts", []);
-const cartData = {}
+// const cartStore = genericStore("carts", []);
+// const cartData = {}
 
 
-cartStore.addCarts = (productId, quantity) => {
-  cartData.userId = commonFunctions.generateUUID();
-  cartData.cartItem = {"productId":productId,"quantity":quantity}
+// // cartStore.addCarts = (productId, quantity) => {
+// //   cartData.userId = commonFunctions.generateUUID();
+// //   cartData.cartItem = {"productId":productId,"quantity":quantity}
 
-  cartStore.setState((state) => ({
-    carts: [...state.carts, cartData],
-  }));
-};
+// //   cartStore.setState((state) => ({
+// //     carts: [...state.carts, cartData],
+// //   }));
+// // };
 
-const addCarts = cartStore.addCarts;
+// cartStore.addCarts = (productId, quantity) => {
+//   cartStore.setState((state) => ({
+//     carts: [...state.carts, { userId: commonFunctions.generateUUID(), cartItem: { productId, quantity } }],
+//   }));
+// };
 
-export default cartStore.getState();
-export {addCarts};
+// const addCarts = cartStore.addCarts;
+
+// export default cartStore.getState();
+// export {addCarts};

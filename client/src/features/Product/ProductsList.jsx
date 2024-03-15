@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/ProductCard";
 import Filter from "../../components/Filter";
-import productStore from "../../store/productStore";
-import cartStore, { addCarts } from "../../store/cartStore";
+import { commonStore } from "../../store/commonStore";
+// import productStore from "../../store/productStore";
+// import cartStore, { addCarts } from "../../store/cartStore";
 
 
 export default function ProductsList() {
     const [loading, setLoading] = useState(false);
-    const products = productStore.getState().products;
+    const products = commonStore((state) => state.products);
+    const addCart = commonStore((state) => state.addCart);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -17,9 +19,7 @@ export default function ProductsList() {
 
     const addtoCart = (product) => {
         // setLoading(true);
-        addCarts(product.id,1);
-        // setCartItems([...cartItems, product.id]);
-        // localStorage.setItem('cart', cartItems);
+        addCart(product.id,1);
         // setTimeout(function () { setLoading(false) }, 2000);
     }
 

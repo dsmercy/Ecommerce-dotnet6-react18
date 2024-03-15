@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import cartStore from '../store/cartStore';
+import { commonStore } from '../store/commonStore';
 
 export default function Home() {
-    const cartItems = cartStore.carts;
+    const carts = commonStore((state) => state.carts);
+    const totalCartItems = carts.reduce((total, item) => total + item.quantity, 0);
     // useEffect(() => {
     //     setCartItems(localStorage.getItem('cart'));
     // }, []);
@@ -77,9 +78,9 @@ export default function Home() {
                             <div className="dropdown-menu dropdown-menu-right top-profile-drop"
                                 aria-labelledby="dropdownMenuButton">
                                 <Link className="dropdown-item" to='/'>My account</Link>
-                                <Link className="dropdown-item" to='/'>My Ordera</Link>
+                                <Link className="dropdown-item" to='/'>My Orders</Link>
                                 <Link className="dropdown-item" to='/'>My address</Link>
-                                <Link className="dropdown-item" to='/'>My Cart</Link>
+                                <Link className="dropdown-item" to='/cart'>My Cart</Link>
                                 <Link className="dropdown-item" to='/'>Logout</Link>
                             </div>
                         </div>
@@ -134,7 +135,7 @@ export default function Home() {
 
                         <Link to='/cart' className="ml-2 text-dark bg-light rounded-pill p-2 icofont-size border shadow-sm">
                             <i className="icofont-shopping-cart"></i>
-                            <span className='badge text-dark' id='lblCartCount'> {cartItems ? cartItems.length : 0} </span>
+                            <span className='badge text-dark' id='lblCartCount'> {carts ? totalCartItems : 0} </span>
                         </Link>
                     </div>
                 </nav>

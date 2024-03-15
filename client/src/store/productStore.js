@@ -1,11 +1,11 @@
-import genericStore from "./genericStore";
+// import genericStore from "./genericStore";
 
-const productStore = genericStore("products", []);
+// const productStore = genericStore("products", []);
 
-productStore.addProducts = (productsToAdd) => {
-    productStore.setState((state) => ({
-      products: productsToAdd,
-    }));
-  };
+// productStore.addProducts = (productsToAdd) => {
+//     productStore.setState((state) => ({
+//       products: productsToAdd,
+//     }));
+//   };
 
-export default productStore;
+// export default productStore;

@@ -4,15 +4,15 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import ProductCard from './ProductCard';
 import services from "../api/services";
-import productStore from '../store/productStore';
+import { commonStore } from '../store/commonStore';
 
 export default function Trending() {
-
-    const products = productStore.getState().products;
-
+    const addProducts = commonStore((state) => state.addProducts);
+    const products = commonStore((state) => state.products);
+    // const [products, setProducts] = useState([]);
     useEffect(() => {
         services.Product.getAll().then(result => {
-            productStore.addProducts(result.response);
+            addProducts(result.response);
         });
     }, []);
 
@@ -28,7 +28,7 @@ export default function Trending() {
                                 </div>
                                 <div className="row">
 
-                                    {products.slice(0, 8).map(product => (
+                                    {products && products.slice(0, 8).map(product => (
                                         <ProductCard product={product} key={product.id} />
                                     ))}
                                 </div>
